@@ -1,0 +1,935 @@
+[
+    {
+        "id": "0d4b2691f4aae2f8",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e93bf475b9947d00",
+        "type": "inject",
+        "z": "0d4b2691f4aae2f8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 220,
+        "y": 200,
+        "wires": [
+            [
+                "d9f34a6c9412768d"
+            ]
+        ]
+    },
+    {
+        "id": "d9f34a6c9412768d",
+        "type": "modbus-getter",
+        "z": "0d4b2691f4aae2f8",
+        "name": "Rheonik",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "unitid": "1",
+        "dataType": "HoldingRegister",
+        "adr": "10",
+        "quantity": "8",
+        "server": "0c660876ea6ca525",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 540,
+        "y": 200,
+        "wires": [
+            [],
+            [
+                "b859af1060c2cd79"
+            ]
+        ]
+    },
+    {
+        "id": "ecaf8d04d99eecae",
+        "type": "debug",
+        "z": "0d4b2691f4aae2f8",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 360,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "f4fb66c835d6e270",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 14",
+        "func": "const registers = Array.isArray(msg.payload) ? msg.payload : msg.payload.data;\n\nif (!Array.isArray(registers) || registers.length < 4) {\n    node.error(\"Invalid register array\", msg);\n    return null;\n}\n\nconst buffer = Buffer.alloc(registers.length * 2);\n\n// Fill buffer (Big Endian: AB CD)\nfor (let i = 0; i < registers.length; i++) {\n    buffer.writeUInt16BE(registers[i], i * 2);\n}\n\n// Convert to float32 every 4 bytes\nconst floats = [];\nfor (let i = 0; i + 3 < buffer.length; i += 4) {\n    floats.push(buffer.readFloatBE(i));\n}\n\nmsg.payload = floats;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 200,
+        "wires": [
+            [
+                "dc17126d9d00457b"
+            ]
+        ]
+    },
+    {
+        "id": "dc17126d9d00457b",
+        "type": "debug",
+        "z": "0d4b2691f4aae2f8",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1180,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "b859af1060c2cd79",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 15",
+        "func": "const registers = Array.isArray(msg.payload) ? msg.payload : msg.payload.data;\n\nif (!Array.isArray(registers) || registers.length < 4) {\n    node.error(\"Invalid register array\", msg);\n    return null;\n}\n\nconst buffer = Buffer.alloc(registers.length * 2);\n\n// Fill buffer (Big Endian: AB CD)\nfor (let i = 0; i < registers.length; i++) {\n    buffer.writeUInt16BE(registers[i], i * 2);\n}\n\n// Convert to float32 every 4 bytes, rounded to 2 decimal places\nconst floats = [];\nfor (let i = 0; i + 3 < buffer.length; i += 4) {\n    const floatVal = buffer.readFloatBE(i);\n    floats.push(parseFloat(floatVal.toFixed(4)));\n}\n\nmsg.payload = floats;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 300,
+        "wires": [
+            [
+                "8d5d37ed848197fd",
+                "f0b46b1e53b7cce1",
+                "e06d9d64ba9df4e8",
+                "f5df36478d8f2b1c"
+            ]
+        ]
+    },
+    {
+        "id": "8d5d37ed848197fd",
+        "type": "debug",
+        "z": "0d4b2691f4aae2f8",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "f0b46b1e53b7cce1",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 16",
+        "func": "msg.payload = msg.payload[0]\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 360,
+        "wires": [
+            [
+                "be82a2a64178a7fa"
+            ]
+        ]
+    },
+    {
+        "id": "be82a2a64178a7fa",
+        "type": "ui_gauge",
+        "z": "0d4b2691f4aae2f8",
+        "name": "",
+        "group": "5b92a6901819dd50",
+        "order": 1,
+        "width": 4,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Vol_Total",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "5000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1180,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "e06d9d64ba9df4e8",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 17",
+        "func": "msg.payload = msg.payload[3]\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 420,
+        "wires": [
+            [
+                "57fb216cb7e9ac63"
+            ]
+        ]
+    },
+    {
+        "id": "57fb216cb7e9ac63",
+        "type": "ui_gauge",
+        "z": "0d4b2691f4aae2f8",
+        "name": "",
+        "group": "5b92a6901819dd50",
+        "order": 2,
+        "width": 4,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Denstiy",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "2",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1180,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "f5df36478d8f2b1c",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 18",
+        "func": "const floats = msg.payload;\n\nconst temperature = floats[0];\nconst humidity = floats[1];\nconst pressure = floats[2];\nconst flowrate = floats[3];\n\n// Force GMT+7 (e.g., Asia/Jakarta)\nconst now = new Date();\nconst offsetMs = 7 * 60 * 60 * 1000;\nconst localTime = new Date(now.getTime() + offsetMs);\n\n// Format YYYY-MM-DD HH:mm:ss\nconst pad = n => n.toString().padStart(2, '0');\nconst timestamp = `${localTime.getFullYear()}-${pad(localTime.getMonth()+1)}-${pad(localTime.getDate())} ${pad(localTime.getHours())}:${pad(localTime.getMinutes())}:${pad(localTime.getSeconds())}`;\n\nmsg.topic = `\n    INSERT INTO sensor_data \n    (vol_total, run_vol, row_rate, density, timestamp) \n    VALUES (?, ?, ?, ?, ?)\n`;\n\nmsg.payload = [temperature, humidity, pressure, flowrate, timestamp];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 460,
+        "wires": [
+            [
+                "b94ea81dbd487cb4",
+                "2534eacb9c055ff6"
+            ]
+        ]
+    },
+    {
+        "id": "b94ea81dbd487cb4",
+        "type": "mysql",
+        "z": "0d4b2691f4aae2f8",
+        "mydb": "0d9c6fa9f10ce5d5",
+        "name": "Rheonik",
+        "x": 480,
+        "y": 540,
+        "wires": [
+            [
+                "ecaf8d04d99eecae",
+                "b73293123b3c5890"
+            ]
+        ]
+    },
+    {
+        "id": "b73293123b3c5890",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 19",
+        "func": "msg.topic = \"SELECT * FROM sensor_data ORDER BY id DESC LIMIT 10\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 540,
+        "wires": [
+            [
+                "033285b5b4f0df5c"
+            ]
+        ]
+    },
+    {
+        "id": "033285b5b4f0df5c",
+        "type": "mysql",
+        "z": "0d4b2691f4aae2f8",
+        "mydb": "57437580d261d26c",
+        "name": "Query",
+        "x": 870,
+        "y": 540,
+        "wires": [
+            [
+                "fefb064043826235"
+            ]
+        ]
+    },
+    {
+        "id": "fefb064043826235",
+        "type": "ui_table",
+        "z": "0d4b2691f4aae2f8",
+        "group": "5b92a6901819dd50",
+        "name": "Table_Rheonik_10_Recent",
+        "order": 3,
+        "width": 9,
+        "height": 5,
+        "columns": [
+            {
+                "field": "id",
+                "title": "ID",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "vol_total",
+                "title": "Vol_Total",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "run_vol",
+                "title": "Run_vol",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "row_rate",
+                "title": "Row_Rate",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "density",
+                "title": "Denstity",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "timestamp",
+                "title": "Timestamp",
+                "width": "50%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 1120,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "c6658ee37cc69f84",
+        "type": "ui_date_picker",
+        "z": "0d4b2691f4aae2f8",
+        "name": "",
+        "label": "Select Date",
+        "group": "5b92a6901819dd50",
+        "order": 12,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "topic": "topic",
+        "topicType": "msg",
+        "className": "",
+        "x": 450,
+        "y": 720,
+        "wires": [
+            [
+                "c5296393c4543e4c"
+            ]
+        ]
+    },
+    {
+        "id": "c5296393c4543e4c",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 20",
+        "func": "const picked = new Date(msg.payload);\n\n// Adjust to local time (WIB/GMT+7)\nconst offsetMs = 7 * 60 * 60 * 1000;\nconst start = new Date(picked.getTime() + offsetMs);\nconst end = new Date(start.getTime() + 24 * 60 * 60 * 1000);\n\n// Format to YYYY-MM-DD HH:mm:ss\nconst pad = n => n.toString().padStart(2, '0');\nconst format = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;\n\nconst startStr = format(start);\nconst endStr = format(end);\n\n// Build SQL\nmsg.topic = `\n    SELECT * FROM sensor_data\n    WHERE timestamp >= '${startStr}' AND timestamp < '${endStr}'\n    ORDER BY timestamp DESC\n`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 720,
+        "wires": [
+            [
+                "a7ac8ef2d50d7d81"
+            ]
+        ]
+    },
+    {
+        "id": "a7ac8ef2d50d7d81",
+        "type": "mysql",
+        "z": "0d4b2691f4aae2f8",
+        "mydb": "ae3255f0002b7eba",
+        "name": "Query_Date_Picker",
+        "x": 870,
+        "y": 720,
+        "wires": [
+            [
+                "14615228455cc19b"
+            ]
+        ]
+    },
+    {
+        "id": "14615228455cc19b",
+        "type": "ui_table",
+        "z": "0d4b2691f4aae2f8",
+        "group": "5b92a6901819dd50",
+        "name": "Table_Rheonik_Date_Picker",
+        "order": 6,
+        "width": 9,
+        "height": 5,
+        "columns": [
+            {
+                "field": "id",
+                "title": "ID",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "vol_total",
+                "title": "Vol_Total",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "run_vol",
+                "title": "Run_vol",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "row_rate",
+                "title": "Row_Rate",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "density",
+                "title": "Denstity",
+                "width": "10%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "timestamp",
+                "title": "Timestamp",
+                "width": "50%",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 1140,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "618b627a46d71aad",
+        "type": "ui_text_input",
+        "z": "0d4b2691f4aae2f8",
+        "name": "Input ID",
+        "label": "Enter ID",
+        "tooltip": "",
+        "group": "5b92a6901819dd50",
+        "order": 13,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "mode": "text",
+        "delay": 300,
+        "topic": "topic",
+        "sendOnBlur": true,
+        "className": "",
+        "topicType": "msg",
+        "x": 460,
+        "y": 800,
+        "wires": [
+            [
+                "ca4c7bfe2428baff"
+            ]
+        ]
+    },
+    {
+        "id": "ca4c7bfe2428baff",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 21",
+        "func": "const id = parseInt(msg.payload);\n\nif (isNaN(id)) {\n    node.warn(\"Invalid ID input\");\n    return null;\n}\n\nmsg.topic = \"SELECT * FROM sensor_data WHERE id = ?\";\nmsg.payload = [id];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 800,
+        "wires": [
+            [
+                "d9dae889ba8ccc57"
+            ]
+        ]
+    },
+    {
+        "id": "d9dae889ba8ccc57",
+        "type": "mysql",
+        "z": "0d4b2691f4aae2f8",
+        "mydb": "ae3255f0002b7eba",
+        "name": "Query_Input",
+        "x": 850,
+        "y": 800,
+        "wires": [
+            [
+                "e4d7126a4894d096"
+            ]
+        ]
+    },
+    {
+        "id": "5292949206c9bb88",
+        "type": "ui_template",
+        "z": "0d4b2691f4aae2f8",
+        "group": "5b92a6901819dd50",
+        "name": "Print",
+        "order": 14,
+        "width": 17,
+        "height": 3,
+        "format": "<style>\n    #printSection {\n        font-family: Arial, sans-serif;\n        padding: 16px;\n        border: 1px solid #ccc;\n        margin-bottom: 12px;\n        background-color: #f9f9f9;\n    }\n\n    .logo {\n        display: block;\n        margin: 0 auto 10px auto;\n        width: 120px;\n        height: auto;\n        max-height: 120px;\n    }\n\n    #printSection h3 {\n        margin-top: 0;\n        color: #333;\n    }\n\n    #printSection p {\n        margin: 4px 0;\n        font-size: 14px;\n    }\n\n    .print-btn {\n        padding: 8px 16px;\n        background-color: #1976d2;\n        color: white;\n        border: none;\n        border-radius: 4px;\n        cursor: pointer;\n        font-size: 14px;\n    }\n\n    .print-btn:hover {\n        background-color: #1565c0;\n    }\n\n    @media print {\n        .print-btn {\n            display: none;\n        }\n    }\n</style>\n\n<div id=\"printSection\">\n    <!-- Put your base64 image below -->\n    <img class=\"logo\" src=\"data:image/jpeg;base64,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\" alt=\"Logo\">\n\n    <h3>Data Preview</h3>\n    <p><b>ID:</b> {{msg.payload.id}}</p>\n    <p><b>Volume Total:</b> {{msg.payload.vol_total}}</p>\n    <p><b>Run Volume:</b> {{msg.payload.run_vol}}</p>\n    <p><b>Flow Rate:</b> {{msg.payload.row_rate}}</p>\n    <p><b>Density:</b> {{msg.payload.density}}</p>\n    <p><b>Timestamp:</b> {{msg.payload.timestamp}}</p>\n</div>\n\n<button class=\"print-btn\" onclick=\"printSection()\">Print</button>\n\n<script>\n    function printSection() {\n    const content = document.getElementById('printSection').innerHTML;\n    const printWindow = window.open('', '', 'height=600,width=800');\n\n    printWindow.document.write('<html><head><title>Print Data</title>');\n    printWindow.document.write(`\n        <style>\n            body { font-family: Arial, sans-serif; }\n            .logo {\n                display: block;\n                margin: 0 auto 10px auto;\n                width: 120px !important;\n                height: auto !important;\n                max-height: 120px !important;\n            }\n            h3 { margin-top: 8px; color: #333; }\n            p { font-size: 14px; margin: 4px 0; }\n        </style>\n    `);\n    printWindow.document.write('</head><body>');\n    printWindow.document.write(content);\n    printWindow.document.write('</body></html>');\n    printWindow.document.close();\n    printWindow.focus();\n    printWindow.print();\n    printWindow.close();\n}\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1250,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e4d7126a4894d096",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 22",
+        "func": "const data = msg.payload[0];\nmsg.payload = data;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 800,
+        "wires": [
+            [
+                "5292949206c9bb88",
+                "624db790348e5071",
+                "de0df0d4f6957801"
+            ]
+        ]
+    },
+    {
+        "id": "624db790348e5071",
+        "type": "ui_template",
+        "z": "0d4b2691f4aae2f8",
+        "group": "5b92a6901819dd50",
+        "name": "Print_Now",
+        "order": 14,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n    #printSection {\n        font-family: Arial, sans-serif;\n        padding: 16px;\n        border: 1px solid #ccc;\n        margin-bottom: 12px;\n        background-color: #f9f9f9;\n    }\n\n    #printSection h3 {\n        margin-top: 0;\n        color: #333;\n    }\n\n    #printSection p {\n        margin: 4px 0;\n        font-size: 14px;\n    }\n\n    .print-btn {\n        padding: 8px 16px;\n        background-color: #1976d2;\n        color: white;\n        border: none;\n        border-radius: 4px;\n        cursor: pointer;\n        font-size: 14px;\n    }\n\n    .print-btn:hover {\n        background-color: #1565c0;\n    }\n\n    .logo {\n        width: 100px;\n        max-height: 100px;\n        margin-bottom: 10px;\n    }\n\n    @media print {\n        .print-btn {\n            display: none;\n        }\n    }\n</style>\n\n<div id=\"printSection\">\n    <img src=\"data:image/jpeg;base64,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\" class=\"logo\" alt=\"Logo\">\n    <h3>Data Preview</h3>\n    <p><b>ID:</b> {{msg.payload.id}}</p>\n    <p><b>Volume Total:</b> {{msg.payload.vol_total}}</p>\n    <p><b>Run Volume:</b> {{msg.payload.run_vol}}</p>\n    <p><b>Flow Rate:</b> {{msg.payload.row_rate}}</p>\n    <p><b>Density:</b> {{msg.payload.density}}</p>\n    <p><b>Timestamp:</b> {{msg.payload.timestamp}}</p>\n</div>\n\n<button class=\"print-btn\" onclick=\"printSection()\">Print Now</button>\n\n<script>\n    function printSection() {\n        const content = document.getElementById('printSection').innerHTML;\n        const printWindow = window.open('', '', 'height=600,width=800');\n\n        printWindow.document.write('<html><head><title>Print Data</title>');\n        printWindow.document.write(`\n            <style>\n                body { font-family: Arial, sans-serif; }\n                .logo { width: 100px; max-height: 100px; margin-bottom: 10px; }\n                h3 { margin-top: 0; color: #333; }\n                p { font-size: 14px; margin: 4px 0; }\n            </style>\n        `);\n        printWindow.document.write('</head><body>');\n        printWindow.document.write(content);\n        printWindow.document.write('</body></html>');\n        printWindow.document.close();\n        printWindow.focus();\n        printWindow.print();\n        printWindow.close();\n    }\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1270,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "de0df0d4f6957801",
+        "type": "ui_template",
+        "z": "0d4b2691f4aae2f8",
+        "group": "5b92a6901819dd50",
+        "name": "Print_Now_size",
+        "order": 14,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n    #printSection {\n        font-family: Arial, sans-serif;\n        padding: 8px;\n        width: 100mm;\n        height: 150mm;\n        background-color: white;\n    }\n\n    #printSection h3 {\n        font-size: 16px;\n        margin: 0 0 8px 0;\n    }\n\n    #printSection p {\n        font-size: 12px;\n        margin: 4px 0;\n    }\n\n    .logo {\n        width: 60px;\n        height: auto;\n        margin-bottom: 8px;\n    }\n\n    .print-btn {\n        padding: 6px 12px;\n        background-color: #1976d2;\n        color: white;\n        border: none;\n        border-radius: 4px;\n        cursor: pointer;\n    }\n\n    @media print {\n        @page {\n            size: 100mm 150mm;\n            margin: 0;\n        }\n\n        .print-btn {\n            display: none;\n        }\n\n        body {\n            -webkit-print-color-adjust: exact;\n        }\n    }\n</style>\n\n<div id=\"printSection\">\n    <img src=\"data:image/jpeg;base64,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\" class=\"logo\" />\n    <h3>Label Print</h3>\n    <p><b>ID:</b> {{msg.payload.id}}</p>\n    <p><b>Volume Total:</b> {{msg.payload.vol_total}}</p>\n    <p><b>Run Volume:</b> {{msg.payload.run_vol}}</p>\n    <p><b>Flow Rate:</b> {{msg.payload.row_rate}}</p>\n    <p><b>Density:</b> {{msg.payload.density}}</p>\n    <p><b>Timestamp:</b> {{msg.payload.timestamp}}</p>\n</div>\n\n<button class=\"print-btn\" onclick=\"printLabel()\">Print Label</button>\n\n<script>\n    function printLabel() {\n    const content = document.getElementById('printSection').innerHTML;\n    const printWindow = window.open('', '', 'width=400,height=600');\n    printWindow.document.write('<html><head><title>Print Label</title>');\n    printWindow.document.write(`\n        <style>\n            @page { size: 100mm 150mm; margin: 0; }\n            body { font-family: Arial; font-size: 12px; -webkit-print-color-adjust: exact; }\n            .logo { width: 60px; height: auto; margin-bottom: 8px; }\n        </style>\n    `);\n    printWindow.document.write('</head><body>');\n    printWindow.document.write(content);\n    printWindow.document.write('</body></html>');\n    printWindow.document.close();\n    printWindow.focus();\n    printWindow.print();\n    printWindow.close();\n}\n</script>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 1280,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8418d94d9a684651",
+        "type": "modbus-flex-getter",
+        "z": "0d4b2691f4aae2f8",
+        "name": "Y0",
+        "showStatusActivities": false,
+        "showErrors": false,
+        "showWarnings": true,
+        "logIOActivities": false,
+        "server": "0c660876ea6ca525",
+        "useIOFile": false,
+        "ioFile": "",
+        "useIOForPayload": false,
+        "emptyMsgOnFail": false,
+        "keepMsgProperties": false,
+        "delayOnStart": false,
+        "startDelayTime": "",
+        "x": 630,
+        "y": 100,
+        "wires": [
+            [
+                "4b8da36c0a9f94a9"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "c0f06566ed462a10",
+        "type": "inject",
+        "z": "0d4b2691f4aae2f8",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 230,
+        "y": 100,
+        "wires": [
+            [
+                "6973f5c42296419a"
+            ]
+        ]
+    },
+    {
+        "id": "6973f5c42296419a",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 23",
+        "func": "msg.payload = {\n    fc: 1,           // Function Code 1 = Read Coils\n    unitid: 1,       // Change if your slave ID is different\n    address: 1281,   // Coil address Y0\n    quantity: 1      // Read 1 coil\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 100,
+        "wires": [
+            [
+                "8418d94d9a684651"
+            ]
+        ]
+    },
+    {
+        "id": "4b8da36c0a9f94a9",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 24",
+        "func": "// Get previous state, default to false\nlet previous = context.get('prev') ?? false;\n\n// Get current coil value from msg.payload[0]\nlet current = msg.payload[0];\n\n// Save current value for next comparison\ncontext.set('prev', current);\n\n// Only allow msg to pass if transition is TRUE → FALSE\nif (previous === true && current === false) {\n    msg.payload = \"Device just turned OFF!\";\n    return msg;\n}\n\nreturn null;  // Don't output anything for other cases",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 100,
+        "wires": [
+            [
+                "a33886c878e3efb4",
+                "d9f34a6c9412768d"
+            ]
+        ]
+    },
+    {
+        "id": "a33886c878e3efb4",
+        "type": "debug",
+        "z": "0d4b2691f4aae2f8",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 1060,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "c587c70d684fd545",
+        "type": "GSheet",
+        "z": "0d4b2691f4aae2f8",
+        "creds": "f009088be65f25a6",
+        "method": "append",
+        "action": "",
+        "sheet": "",
+        "cells": "Sheet1!A1:E1",
+        "flatten": true,
+        "name": "",
+        "x": 750,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2534eacb9c055ff6",
+        "type": "function",
+        "z": "0d4b2691f4aae2f8",
+        "name": "function 25",
+        "func": "// Reuse the existing payload values\nconst [temperature, humidity, pressure, flowrate, timestamp] = msg.payload;\n\n// Rearranged for spreadsheet\nmsg.payload = [\n    timestamp,     // Column A\n    temperature,   // Column B\n    humidity,      // Column C\n    pressure,      // Column D\n    flowrate       // Column E\n];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 440,
+        "wires": [
+            [
+                "c587c70d684fd545",
+                "c8dda8d54c186ba1"
+            ]
+        ]
+    },
+    {
+        "id": "c8dda8d54c186ba1",
+        "type": "debug",
+        "z": "0d4b2691f4aae2f8",
+        "name": "debug 13",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 740,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "0c660876ea6ca525",
+        "type": "modbus-client",
+        "name": "Rheonik",
+        "clienttype": "tcp",
+        "bufferCommands": true,
+        "stateLogEnabled": false,
+        "queueLogEnabled": false,
+        "failureLogEnabled": true,
+        "tcpHost": "192.168.1.5",
+        "tcpPort": 502,
+        "tcpType": "DEFAULT",
+        "serialPort": "/dev/ttyUSB",
+        "serialType": "RTU-BUFFERD",
+        "serialBaudrate": 9600,
+        "serialDatabits": 8,
+        "serialStopbits": 1,
+        "serialParity": "none",
+        "serialConnectionDelay": 100,
+        "serialAsciiResponseStartDelimiter": "0x3A",
+        "unit_id": 1,
+        "commandDelay": 1,
+        "clientTimeout": 1000,
+        "reconnectOnTimeout": true,
+        "reconnectTimeout": 2000,
+        "parallelUnitIdsAllowed": true,
+        "showErrors": false,
+        "showWarnings": true,
+        "showLogs": true
+    },
+    {
+        "id": "5b92a6901819dd50",
+        "type": "ui_group",
+        "name": "Sensor Table",
+        "tab": "06dd4d7951f1da39",
+        "order": 1,
+        "disp": true,
+        "width": 17,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "0d9c6fa9f10ce5d5",
+        "type": "MySQLdatabase",
+        "name": "Rheonik",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "test_rheonik",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "57437580d261d26c",
+        "type": "MySQLdatabase",
+        "name": "Query_Rheonik",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "test_rheonik",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "ae3255f0002b7eba",
+        "type": "MySQLdatabase",
+        "name": "Query_Input",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "test_rheonik",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "f009088be65f25a6",
+        "type": "gauth",
+        "name": "Unknown"
+    },
+    {
+        "id": "06dd4d7951f1da39",
+        "type": "ui_tab",
+        "name": "Dashboard",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
